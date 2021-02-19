@@ -1,102 +1,103 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+import React from "react"
+import {View,ScrollView,StyleSheet,Keyboard} from "react-native"
+import Header from "./Header"
+import Input from "./TextInput"
+import Button from "./Button"
+import TodoList from "./TodoList"
+import TabBar from "./TabBar"
 
-import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+export interface ITodo {
+  title:string;
+  todoIndex:number;
+  complete:boolean;
+}
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+export type todoType = "All" | "Completed" | "Active"
 
-interface IProps {}
+const App = () => {
 
-const App:React.FC<IProps> = () => {
-  const [state,setState] = React.useState({
-    year:2021,
-    leapYear:false,
-    topics:['React','React Native','Javascript'],
-    info:{
-      paperback:true,
-      length:'335 pages',
-      type:"programming"
+  const [todoList,setTodoList] = React.useState<ITodo[]>([])
+  const [currentTodoList,setCurrentTodoList] = React.useState<ITodo[]>([])
+  const [currentTodo,setCurrentTodo] = React.useState("")
+  const [currentTodoType,setCurrentTodoType] = React.useState<todoType>("All")
+  
+  const inputChange = (e: string) => {
+    setCurrentTodo(e)
+  }
+  Keyboard.addListener("keyboardDidHide",() => {
+    submitTodo()
+})
+
+  React.useEffect(() => {
+    let newCurrentTodoList:any[];
+    if(currentTodoType === "Active"){
+      newCurrentTodoList = todoList.filter(item => item.complete === false)
+    }else if(currentTodoType === "Completed"){
+      newCurrentTodoList = todoList.filter(item => item.complete === true)
+    }else{
+      newCurrentTodoList = [...todoList]
     }
-  })
-  const updateYear = () => {
-    const newYear = state.year+1
-    // setState({...state,year:newYear})
-    state.year = newYear
+    setCurrentTodoList(newCurrentTodoList)
+  },[currentTodoType,todoList])
+
+  const submitTodo = () => {
+    if(currentTodo.match(/^\s*$/)){
+      return;
+    }
+    const todo = {
+      title:currentTodo,
+      todoIndex:todoList.length+1,
+      complete:false
+    }
+    setTodoList([...todoList,todo])
+    setCurrentTodo("")
+    setCurrentTodoType("All")
   }
-  let leapYear;
-  if(state.leapYear){
-    leapYear = <Text>This is a leapYear</Text>
-  }else{
-    leapYear = <Text>This is not a leapYear</Text>
+  const toggleComplete = (arg:number) => {
+    const filteredTodoList = [...todoList]
+    const foundTodoIdx = filteredTodoList.findIndex(item => item.todoIndex === arg)
+    const newTodo = {
+      ...todoList[foundTodoIdx],
+      complete:!todoList[foundTodoIdx].complete
+    }
+    filteredTodoList.splice(foundTodoIdx,1,newTodo)
+    setTodoList([...filteredTodoList])
   }
-  return (
-    <>
-      <SafeAreaView>
-        <Text>{state.year}</Text>
-        <Text onPress={updateYear}>Length: {state.info.length} </Text>
-        <Text>Type: {state.info.type}</Text>
-        {leapYear}
-      </SafeAreaView>
-    </>
-  );
-};
+  const handleDelete = (arg:number) => {
+    const filteredTodoList = todoList.filter(item => item.todoIndex !== arg)
+    setTodoList([...filteredTodoList])
+  }
+  const setType = (arg:todoType) => {
+    setCurrentTodoType(arg)
+  }
+
+  return(
+    <View style={styles.container}>
+      <ScrollView keyboardShouldPersistTaps="always" style={styles.content} >
+        <Header/>
+        <Input handleChange={inputChange} submitTodo={submitTodo} value={currentTodo} />
+        <TodoList todos={currentTodoList} handleComplete={toggleComplete}
+         handleDelete={handleDelete} />
+        <Button onClick={submitTodo}>
+          Submit
+        </Button>
+      </ScrollView>
+      <TabBar setType={setType}
+        type={currentTodoType}
+      />
+    </View>
+  )
+}
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+  container:{
+    flex:1,
+    backgroundColor:"#f5f5f5"
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
-});
+  content:{
+    flex:1,
+    paddingTop:60
+  }
+})
 
-export default App;
+export default App
