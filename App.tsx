@@ -1,24 +1,51 @@
 import React from "react"
-import {Button,StyleSheet,View} from "react-native"
-import getStyleSheet from "./styles"
+import {Image,StyleSheet,View,Text,Platform} from "react-native"
+import ProfileCard from "./ProfileCard"
+
+const userImage = require("./profileImage.jpg")
+
 
 const App = () => {
-  const [useDark,setUseDark ] = React.useState(false)
+  const [data,setData] = React.useState([{
+    image: userImage,
+    name: "Temitope Emmanuel Ojo",
+    occupation: "React Native Developer",
+    description: `Temitope is a really great Javascript developer.
+    He loves using JS to build React Native applications for 
+    iOS and Android.`,
+    showThumbnail: true
+}])
 
-  const toggleTheme = () => {
-    console.log("clicking")
-    setUseDark(!useDark)
+  const handleProfileCardPress = (idx:number) => () => {
+    const filteredData = [...data]
+    const newShowThumbnail = !data[idx].showThumbnail;
+    filteredData.splice(idx,1,{
+      ...data[idx],
+      showThumbnail:newShowThumbnail
+    })
+    setData(filteredData)
   }
-  const styles = getStyleSheet(useDark)
-  const backgroundColor = StyleSheet.flatten(styles.container).backgroundColor;
+  const list = data.map(({description,image,name,showThumbnail,occupation},idx) => (
+   <ProfileCard key={`card-${idx}`} name={name} description={description} onPress={handleProfileCardPress(idx)}
+   image={image} occupation={occupation} showThumbnail={showThumbnail}
+   /> 
+  ))
 
   return(
     <View style={styles.container}>
-      <View style={styles.box}>
-        <Button title={backgroundColor} color="black" onPress={toggleTheme}/>
-      </View>
+      {list}
     </View>
   )
 }
+
+
+export const styles = StyleSheet.create({
+  container:{
+    flex:1,
+    justifyContent:'center',
+    alignItems:'center'
+  }
+})
+
 
 export default App
