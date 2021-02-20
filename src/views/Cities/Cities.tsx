@@ -5,7 +5,7 @@ import {colors} from "../../theme"
 import locationContext from "../../utils/ScreentProvider"
 import { MaterialBottomTabNavigationProp } from "@react-navigation/material-bottom-tabs"
 import { RouteProp } from "@react-navigation/native"
-import { RootStackParamList } from "../../../App"
+import { RootStackParamList } from "../../../App2"
 import {ICity} from "../../utils/ScreentProvider"
 
 type AddCityScreenNavigationProp = MaterialBottomTabNavigationProp<RootStackParamList,"Cities">

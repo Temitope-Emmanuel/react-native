@@ -11,9 +11,9 @@ import {name as appName} from './app.json';
 import {NavigationContainer} from "@react-navigation/native"
 
 const Root = () => (
-    <NavigationContainer>
+    // <NavigationContainer>
         <App/>
-    </NavigationContainer>
+    // </NavigationContainer>
 )
 
 AppRegistry.registerComponent(appName, () => Root);

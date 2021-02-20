@@ -7,7 +7,7 @@ import {MaterialBottomTabNavigationProp} from "@react-navigation/material-bottom
 import {RouteProp} from "@react-navigation/native"
 import 'react-native-get-random-values'
 import {v4 as uuid} from "uuid"
-import {RootStackParamList} from "../../../App"
+import {RootStackParamList} from "../../../App2"
 
 type AddCityScreenNavigationProp = MaterialBottomTabNavigationProp<RootStackParamList,"AddCity">
 type AddCityScreenRouteProp = RouteProp<RootStackParamList,"AddCity">

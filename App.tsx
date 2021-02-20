@@ -1,54 +1,40 @@
 import React from 'react'
+import {View,Button,StyleSheet,Animated} from "react-native"
+import TextInput from "./TextInput"
+import Spinner from "./Spinner"
+import Parrallel from "./Parrallel"
+import Sequence from "./Sequence"
+import Stagger from "./Stagger"
 
-import {AddCity} from "./src/views/AddCity"
-import {Cities} from "./src//views/Cities"
-import {ICity, LocationContextProvider} from "./src/utils/ScreentProvider"
-import {colors} from "./src/theme"
-import {City} from "./src/views/City"
-// import {colors} from "./theme"
-import {createStackNavigator,StackNavigationOptions} from "@react-navigation/stack"
-import {createMaterialBottomTabNavigator,MaterialBottomTabNavigationOptions} from "@react-navigation/material-bottom-tabs"
-
-
-export type RootStackParamList = {
-  AddCity:undefined
-  Cities:undefined
-  City:{
-    city:Pick<ICity,"id"| "city">
-  };
+const App = () => {
+    const marginTop = new Animated.Value(20)
+    const animate = () => {
+        console.log("calling the animate func")
+        Animated.timing(
+            marginTop,{
+                toValue:200,
+                duration:500,
+                useNativeDriver:false,
+            }
+        ).start()
+    }
+    return(
+        <View style={styles.container} >
+            <Stagger/>
+        </View>
+    )
 }
-const Stack = createStackNavigator<RootStackParamList>()
+const styles = StyleSheet.create({
+    container:{
+        flex:1,
+        padding:10,
+        paddingTop:50
+    },
+    box:{
+        width:150,
+        height:150,
+        backgroundColor:'red'
+    }
+})
 
-
-const options:StackNavigationOptions = {
-  headerStyle:{
-    backgroundColor:colors.primary
-  },
-  headerTintColor:"#fff"
-}
-
-interface City {
-  city:{
-    id:string
-  }
-}
-
-const CityStackScreen = () => (
-  <Stack.Navigator screenOptions={options}>
-    <Stack.Screen name="AddCity" component={AddCity} />
-  </Stack.Navigator>
-)
-const Tab = createMaterialBottomTabNavigator()
-
-
-const App = () => (
-    <Tab.Navigator initialRouteName="AddCity" >
-        <Tab.Screen name="AddCity" options={{
-          title:"Add City"
-        }} component={CityStackScreen} />
-        <Tab.Screen name="Cities" component={Cities} />
-        <Tab.Screen name="City" component={City} />
-    </Tab.Navigator>
-)
-
-export default LocationContextProvider(App)
+export default App
