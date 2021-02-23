@@ -1,40 +1,102 @@
-import React from 'react'
-import {View,Button,StyleSheet,Animated} from "react-native"
-import TextInput from "./TextInput"
-import Spinner from "./Spinner"
-import Parrallel from "./Parrallel"
-import Sequence from "./Sequence"
-import Stagger from "./Stagger"
+import React from "react"
+import {TouchableHighlight,AppState,View,Text,StyleSheet,Alert,TextInput} from "react-native"
+import Clipboard from "@react-native-community/clipboard"
+
+// const styles = {}
 
 const App = () => {
-    const marginTop = new Animated.Value(20)
-    const animate = () => {
-        console.log("calling the animate func")
-        Animated.timing(
-            marginTop,{
-                toValue:200,
-                duration:500,
-                useNativeDriver:false,
+    const [showMessage,setShowMessage] = React.useState(false)
+    const [clipBoardData,setClipBoardText] = React.useState<string[]>([])
+
+    
+    React.useEffect(() => {
+        Clipboard.setString("Hello Worlds")
+        // AppState.addEventListener("change",handleAppStateChange)
+    },[])
+    const updateClipboard = (newString:string) => {
+        Clipboard.setString(newString)
+    }
+    const pushClipboardToArray = async () => {
+        const content = await Clipboard.getString();
+        clipBoardData.push(content)
+        setClipBoardText([...clipBoardData])
+    }
+
+    const handleAppStateChange = (currentAppState:any) => {
+        console.log("currentAppState",currentAppState)
+    }
+    const showAlert = () => {
+        Alert.alert("Title","Message!",[
+            {
+                onPress:() => console.log("Dismiss called..."),
+                style:"destructive",
+                text:"Cancel"
+            },
+            {
+                text:"Show Message",
+                onPress:() => setShowMessage(true)
             }
-        ).start()
+        ])
     }
     return(
-        <View style={styles.container} >
-            <Stagger/>
+        <View style={styles.container}>
+            <Text style={{textAlign:"center"}}>
+                Testing Clipboard
+            </Text>
+            <TextInput style={styles.input}
+                onChangeText={updateClipboard}
+            />
+            <TouchableHighlight style={styles.button}
+                onPress={pushClipboardToArray}
+            >
+                <Text>Click to Add to Array</Text>
+            </TouchableHighlight>
+            {
+                clipBoardData.map((item,idx) => (
+                    <Text key={idx}>
+                        {item}
+                    </Text>
+                ))
+            }
+            {/* <Text>
+                Testing App State
+            </Text> */}
+            {/* <TouchableHighlight onPress={showAlert} style={styles.button} >
+                <Text>
+                    SHOW ALERT
+                </Text>
+            </TouchableHighlight>
+            {showMessage && <Text>
+                Show message - success
+                </Text>} */}
         </View>
     )
 }
+
 const styles = StyleSheet.create({
     container:{
-        flex:1,
-        padding:10,
-        paddingTop:50
+        justifyContent:'center',
+        flex:1
     },
-    box:{
-        width:150,
-        height:150,
-        backgroundColor:'red'
-    }
+    // button:{
+    //     height:70,
+    //     justifyContent:'center',
+    //     alignItems:"center",
+    //     backgroundColor:"#ededed"
+    // },
+    input: {
+        padding: 10,
+        marginTop: 15,
+        height: 60,
+        backgroundColor: '#dddddd'
+        },
+        button: {
+        backgroundColor: '#dddddd',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 60,
+        marginTop: 15,
+        }
 })
 
 export default App
