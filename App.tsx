@@ -1,47 +1,23 @@
-import React from 'react'
-import {
-    DrawerLayoutAndroid,
-    DrawerLayoutAndroidProps,
-    Button,View,
-} from "react-native"
-import Menu from "./Menu"
-import AppComponent from "./AppComponent"
-import AndroidToolBar from "./AndroidToolBar"
+import React from "react"
+import {createStackNavigator} from "@react-navigation/stack"
+import {People} from "./src/views/People"
+import {StarWars} from "./src/views/StarWars"
 
-export type AcceptedParams = "Home" | "Toolbar" | "ViewPager" | "DatePicker" | "ToastAndroid"
 
-const App = () => {
-    const [scene,setScene] = React.useState<AcceptedParams>("Home")
-    const [drawerPosition,setDrawerPosition] = React.useState<"left"| "right">("left")
-    const drawerRef = React.useRef<DrawerLayoutAndroid>(null)
-    const changeDrawerPosition = () => {
-        if(drawerPosition === "left") {
-            setDrawerPosition("right")
-        }else{
-            setDrawerPosition("left")
-        }
-    }
-    const openDrawer = () => {
-        drawerRef.current?.openDrawer()
-    }
-    const jump = (scene:AcceptedParams) => {
-        setScene(scene)
-        drawerRef.current?.closeDrawer()
-    }
 
-    return(
-        <DrawerLayoutAndroid ref={drawerRef} renderNavigationView={() => <Menu onPress={jump} />}
-            drawerWidth={300} drawerPosition={drawerPosition}
-        >
-            <AndroidToolBar openDrawer={openDrawer} />
-            <View style={{margin:15}}>
-                <Button onPress={openDrawer} title="Open Drawer" />
-            </View>
-            <AppComponent jump={jump} scene={scene}
-            openDrawer={openDrawer}
-            />
-        </DrawerLayoutAndroid>
-    )
+export type RootStackParamsList = {
+    People:undefined,
+    StarWars:undefined
 }
+
+const Stack = createStackNavigator<RootStackParamsList>()
+
+const App = () => (
+    <Stack.Navigator initialRouteName="StarWars"
+    >
+        <Stack.Screen name="StarWars" component={StarWars} />
+        <Stack.Screen name="People" component={People}/>
+    </Stack.Navigator>
+)
 
 export default App
